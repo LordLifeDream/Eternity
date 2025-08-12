@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="eternity:jar">
+    <output-path>$USER_HOME$/Desktop/eternity</output-path>
+    <root id="root">
+      <element id="archive" name="eternity.jar">
+        <element id="module-output" name="eternity" />
+      </element>
+      <element id="library" level="project" name="Maven: org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r" />
+      <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.18.0" />
+      <element id="library" level="project" name="Maven: org.json:json:20250517" />
+      <element id="library" level="project" name="Maven: com.googlecode.javaewah:JavaEWAH:1.2.3" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.36" />
+    </root>
+  </artifact>
+</component>
