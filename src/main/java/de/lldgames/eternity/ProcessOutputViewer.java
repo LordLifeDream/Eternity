@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class ProcessOutputViewer extends JFrame {
     JPanel list;
@@ -25,11 +26,15 @@ public class ProcessOutputViewer extends JFrame {
         list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(list);
         add(scrollPane, BorderLayout.CENTER);
+        this.setupSouth();
 
         setVisible(true);
     }
 
-    private void setupInput(){
+    private void setupSouth(){
+        JPanel southPanel = new JPanel();
+        southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.X_AXIS));
+
         JTextField field = new JTextField();
         field.setToolTipText("process input");
         field.addActionListener((e)->{
@@ -42,14 +47,16 @@ public class ProcessOutputViewer extends JFrame {
                 ex.printStackTrace();
             }
         });
-        this.add(field, BorderLayout.SOUTH);
+       // this.add(field, BorderLayout.SOUTH);
+        southPanel.add(field);
+        this.add(southPanel, BorderLayout.SOUTH);
         this.revalidate();
     }
 
     public void displayApp(App app){
         this.displayProcessOutput(app.process);
         this.setTitle("Process output: " + app.name);
-        this.setupInput();
+        //this.setupInput();
     }
 
     public void onMessage(String msg){
