@@ -25,6 +25,8 @@ public class App {
     private Git repo;
     public Process process;
     private AppIOHandler ioHandler;
+    private boolean shouldBeRunning;
+    private long startTime = -1;
 
 
     public App(JSONObject data, String name){
@@ -57,6 +59,7 @@ public class App {
     //start/stop
     public void start(){
         this.stop();
+        this.shouldBeRunning = true;
         try {
             boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
             //fix for npm on windows
@@ -66,6 +69,16 @@ public class App {
                     //.inheritIO();
             this.process = pb.start();
             this.ioHandler.handleProcess(this.process);
+            this.startTime = System.currentTimeMillis();
+            this.process.onExit().thenAccept((p)->{
+                if(this.shouldBeRunning && !this.process.isAlive()){ //make sure this ist a stray process that's supposed to be long gone
+                    long deltaTime = System.currentTimeMillis()-startTime;
+                    System.out.println("process"+this.name+ " ended but should be running???");
+                    System.out.println("time since start: " + deltaTime);
+                    if(deltaTime>1000*60) this.start();
+                    else System.err.println("did not restart process, since it has crashed less than a minute after launch.");
+                }
+            });
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -75,6 +88,7 @@ public class App {
     }
     public void stop(){
         if(!isRunning()) return;
+        this.shouldBeRunning = false;
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(()->{
             System.out.println("got tired of waiting for " + this.localLocation+" to destroy. forcing...");
