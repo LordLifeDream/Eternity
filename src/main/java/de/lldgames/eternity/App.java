@@ -146,7 +146,8 @@ public class App {
                 .put("localLocation", "./xx")
                 .put("gitToken", "xxx")
                 .put("runCmd", "java -jar xx.jar")
-                .put("pullInterval", 5);
+                .put("pullInterval", 5)
+                .put("gui", true);
         try(FileOutputStream fos = new FileOutputStream(f)){
             fos.write(data.toString().getBytes());
         }catch (Exception e){
