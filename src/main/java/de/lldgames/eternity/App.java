@@ -24,6 +24,7 @@ public class App {
 
     private Git repo;
     public Process process;
+    private AppIOHandler ioHandler;
 
 
     public App(JSONObject data, String name){
@@ -33,6 +34,8 @@ public class App {
         this.runCmd = data.getString("runCmd");
         this.pullInterval = data.getLong("pullInterval");
         this.name = name;
+        this.ioHandler = new AppIOHandler(/*null, */new File(this.localLocation),
+                data.has("io")? data.getJSONObject("io"):AppIOHandler.DEFAULT_CONFIG);
         this.init();
 
         this.start();
@@ -62,6 +65,7 @@ public class App {
                     .directory(new File(this.localLocation));
                     //.inheritIO();
             this.process = pb.start();
+            this.ioHandler.handleProcess(this.process);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -76,7 +80,7 @@ public class App {
             System.out.println("got tired of waiting for " + this.localLocation+" to destroy. forcing...");
             process.destroyForcibly();
         }, 10, TimeUnit.SECONDS);
-        destroyChildren(process);
+        killChildren(process);
         process.destroy();
         //start timeout force destroy
         try{
@@ -94,7 +98,7 @@ public class App {
         this.start();
     }
 
-    private void destroyChildren(Process p){
+    private void killChildren(Process p){
         long pid = p.pid();
         System.out.println("killing processes for "+pid);
         ProcessBuilder builder;
@@ -141,14 +145,14 @@ public class App {
     }
 
     public static JSONObject generateDummyJSON(){
-        JSONObject data = new JSONObject()
+        return new JSONObject()
                 .put("repoURL", "https://github.com/user/xx.git")
                 .put("localLocation", "./xx")
                 .put("gitToken", "xxx")
                 .put("runCmd", "java -jar xx.jar")
                 .put("pullInterval", 5)
-                .put("gui", true);
-        return data;
+                //.put("gui", true);
+                .put("io", AppIOHandler.DEFAULT_CONFIG);
         /*
         try(FileOutputStream fos = new FileOutputStream(f)){
             fos.write(data.toString().getBytes());

@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 public class ProcessOutputViewer extends JFrame {
     JPanel list;
     Process process;
-    public ProcessOutputViewer() {
+    public ProcessOutputViewer(Process process) {
+        this.process = process;
         setTitle("Process Output");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -51,12 +52,12 @@ public class ProcessOutputViewer extends JFrame {
         this.setupInput();
     }
 
-    private void onMessage(String msg){
+    public void onMessage(String msg){
         SwingUtilities.invokeLater(() -> {
             appendColored(msg + "\n", Color.BLACK);
         });
     }
-    private void onError(String err){
+    public void onError(String err){
         SwingUtilities.invokeLater(() -> {
             appendColored("[ERROR] " + err + "\n", Color.RED);
         });
@@ -79,6 +80,11 @@ public class ProcessOutputViewer extends JFrame {
         list.revalidate();
     }
 
+    public void setProcess(Process process){
+        this.process = process;
+    }
+
+    @Deprecated
     public void displayProcessOutput(Process process) {
         this.process = process;
         new Thread(() -> {

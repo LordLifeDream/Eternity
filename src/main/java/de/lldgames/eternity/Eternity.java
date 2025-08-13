@@ -40,7 +40,7 @@ public class Eternity {
         for(String key: apps.keySet()){
             App app = new App(apps.getJSONObject(key), key);
             loadedApps.add(app);
-            if(apps.getJSONObject(key).has("gui") && apps.getJSONObject(key).getBoolean("gui")) new ProcessOutputViewer().displayApp(app);
+            if(apps.getJSONObject(key).has("gui") && apps.getJSONObject(key).getBoolean("gui") && false) new ProcessOutputViewer(null).displayApp(app);
             System.out.println("loaded app " + key);
         }
     }
