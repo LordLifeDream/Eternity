@@ -71,7 +71,7 @@ public class App {
             this.ioHandler.handleProcess(this.process);
             this.startTime = System.currentTimeMillis();
             this.process.onExit().thenAccept((p)->{
-                if(this.shouldBeRunning && !this.process.isAlive()){ //make sure this ist a stray process that's supposed to be long gone
+                if(this.shouldBeRunning && !this.isRunning()){ //make sure this ist a stray process that's supposed to be long gone
                     long deltaTime = System.currentTimeMillis()-startTime;
                     System.out.println("process"+this.name+ " ended but should be running???");
                     System.out.println("time since start: " + deltaTime);
