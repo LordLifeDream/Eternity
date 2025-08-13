@@ -71,12 +71,12 @@ public class App {
             this.ioHandler.handleProcess(this.process);
             this.startTime = System.currentTimeMillis();
             this.process.onExit().thenAccept((p)->{
-                if(this.shouldBeRunning && !this.isRunning()){ //make sure this ist a stray process that's supposed to be long gone
+                if(this.shouldBeRunning && !this.isRunning()){ //make sure this isn't a stray process that's supposed to be long gone
                     long deltaTime = System.currentTimeMillis()-startTime;
-                    System.out.println("process"+this.name+ " ended but should be running???");
+                    System.out.println("process "+this.name+ " ended but should be running???");
                     System.out.println("time since start: " + deltaTime);
                     if(deltaTime>1000*60) this.start();
-                    else System.err.println("did not restart process, since it has crashed less than a minute after launch.");
+                    else System.err.println("did not restart process, since it has stopped less than a minute after launch.");
                 }
             });
         }catch (Exception e){
