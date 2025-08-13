@@ -140,7 +140,7 @@ public class App {
         }
     }
 
-    public static void generateDummyFile(File f){
+    public static JSONObject generateDummyJSON(){
         JSONObject data = new JSONObject()
                 .put("repoURL", "https://github.com/user/xx.git")
                 .put("localLocation", "./xx")
@@ -148,11 +148,14 @@ public class App {
                 .put("runCmd", "java -jar xx.jar")
                 .put("pullInterval", 5)
                 .put("gui", true);
+        return data;
+        /*
         try(FileOutputStream fos = new FileOutputStream(f)){
             fos.write(data.toString().getBytes());
         }catch (Exception e){
             e.printStackTrace();
         }
+        */
     }
 
     private void cloneRepo(){

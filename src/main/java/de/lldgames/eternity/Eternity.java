@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class Eternity {
@@ -12,7 +13,11 @@ public class Eternity {
         File appsFile = new File("./apps.json");
         try{
             if(!appsFile.exists()){
-                App.generateDummyFile(appsFile);
+                JSONObject dummy = new JSONObject();
+                dummy.put("exampleApp", App.generateDummyJSON());
+                try(FileOutputStream fos = new FileOutputStream(appsFile)){
+                    fos.write(dummy.toString().getBytes());
+                }
                 System.exit(11);
             }
         }catch (Exception e){
