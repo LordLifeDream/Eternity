@@ -25,6 +25,9 @@ public class AppIOHandler {
     }
 
     public void onMessage(String msg){
+        if(this.ui && this.viewer !=null){
+            this.viewer.onMessage(msg);
+        }
         if(this.writeToFile){
             try {
                 outWriter.newLine();
@@ -33,12 +36,12 @@ public class AppIOHandler {
                 throw new RuntimeException(e);
             }
         }
-        if(this.ui && this.viewer !=null){
-            this.viewer.onMessage(msg);
-        }
     }
 
     public void onError(String err){
+        if(this.ui && this.viewer !=null){
+            this.viewer.onError(err);
+        }
         if(this.writeToFile){
             try {
                 outWriter.newLine();
@@ -46,9 +49,6 @@ public class AppIOHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        if(this.ui && this.viewer !=null){
-            this.viewer.onError(err);
         }
     }
 
