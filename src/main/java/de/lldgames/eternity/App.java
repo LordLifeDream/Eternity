@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.http.HttpRequest;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,7 +60,7 @@ public class App {
      */
     public void update(){
         if(this.pullRepo()){
-            System.out.println("new changes pulled in app "+this.name);
+            System.out.println("new changes pulled in app "+this.name +" @ "+ LocalDateTime.now());
             this.restart();
         }
     }
@@ -67,7 +68,7 @@ public class App {
     //start/stop
     public void start(){
         this.stop();
-        System.out.println(this.name+": start()");
+        System.out.println(this.name+": start() @ "+ LocalDateTime.now());
         this.shouldBeRunning = true;
         try {
             boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
@@ -97,7 +98,7 @@ public class App {
     }
     public void stop(){
         if(!isRunning()) return;
-        System.out.println(this.name+": stop()");
+        System.out.println(this.name+": stop() @ "+ LocalDateTime.now());
         this.shouldBeRunning = false;
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(()->{
