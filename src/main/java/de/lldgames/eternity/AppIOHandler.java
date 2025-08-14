@@ -61,6 +61,12 @@ public class AppIOHandler {
             if(this.viewer == null) this.setupUI();
             else this.viewer.setProcess(this.process);
         }
+        //input stream
+        new AppIOReaderThread(this::onMessage, process, process.getInputStream()).start();
+        //error stream
+        new AppIOReaderThread(this::onError, process, process.getErrorStream()).start();
+
+        /*
         new Thread(() -> {
             try (InputStream inputStream = process.getInputStream();
                  InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -88,6 +94,7 @@ public class AppIOHandler {
                 e.printStackTrace();
             }
         }).start();
+         */
     }
 
     private void setupUI(){
