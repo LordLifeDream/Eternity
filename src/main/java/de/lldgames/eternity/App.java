@@ -2,6 +2,7 @@ package de.lldgames.eternity;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
@@ -19,6 +20,7 @@ public class App {
     private String gitToken; //gh user access token
     private String runCmd; // command to start the app. eg. java -jar x.jar TODO: make better tokenization
     private long pullInterval; //pull interval in minutes.
+    private String mergeStrategy; // MergeStrategy.get()
 
     public final String name;
 
@@ -35,6 +37,7 @@ public class App {
         this.gitToken = data.getString("gitToken");
         this.runCmd = data.getString("runCmd");
         this.pullInterval = data.getLong("pullInterval");
+        this.mergeStrategy = data.has("mergeStrategy")? data.getString("mergeStrategy") : MergeStrategy.OURS.getName();
         this.name = name;
         this.ioHandler = new AppIOHandler(/*null, */new File(this.localLocation),
                 data.has("io")? data.getJSONObject("io"):AppIOHandler.DEFAULT_CONFIG);
@@ -149,6 +152,7 @@ public class App {
         try{
             PullResult pull= repo.pull()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.gitToken))
+                    .setStrategy(MergeStrategy.get(this.mergeStrategy.toUpperCase()))
                     .call();
             boolean changed = pull.getFetchResult().getTrackingRefUpdates()!=null &&  !pull.getFetchResult().getTrackingRefUpdates().isEmpty();
             return changed;
@@ -165,6 +169,7 @@ public class App {
                 .put("gitToken", "xxx")
                 .put("runCmd", "java -jar xx.jar")
                 .put("pullInterval", 5)
+                .put("mergeStrategy", "OURS")
                 //.put("gui", true);
                 .put("io", AppIOHandler.DEFAULT_CONFIG);
         /*
