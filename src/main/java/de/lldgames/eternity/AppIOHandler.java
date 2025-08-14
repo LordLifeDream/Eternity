@@ -28,7 +28,7 @@ public class AppIOHandler {
         if(this.ui && this.viewer !=null){
             this.viewer.onMessage(msg);
         }
-        if(this.writeToFile){
+        if(this.writeToFile && !msg.isBlank()){
             try {
                 outWriter.newLine();
                 outWriter.write(LocalDateTime.now().toString()+": "+msg);
@@ -42,7 +42,7 @@ public class AppIOHandler {
         if(this.ui && this.viewer !=null){
             this.viewer.onError(err);
         }
-        if(this.writeToFile){
+        if(this.writeToFile && !err.isBlank()){
             try {
                 outWriter.newLine();
                 outWriter.write("[-ERR-] "+LocalDateTime.now().toString()+": "+err);
