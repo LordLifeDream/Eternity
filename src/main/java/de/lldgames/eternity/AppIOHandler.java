@@ -33,7 +33,7 @@ public class AppIOHandler {
                 outWriter.newLine();
                 outWriter.write(LocalDateTime.now().toString()+": "+msg);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             }
         }
     }
@@ -47,7 +47,7 @@ public class AppIOHandler {
                 outWriter.newLine();
                 outWriter.write("[-ERR-] "+LocalDateTime.now().toString()+": "+err);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             }
         }
     }

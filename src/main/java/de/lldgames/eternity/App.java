@@ -2,10 +2,12 @@ package de.lldgames.eternity;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.merge.ContentMergeStrategy;
 import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.http.HttpRequest;
@@ -150,11 +152,22 @@ public class App {
      */
     private boolean pullRepo(){
         try{
+            repo.stashCreate().call();
             PullResult pull= repo.pull()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.gitToken))
                     .setStrategy(MergeStrategy.get(this.mergeStrategy.toUpperCase()))
+                    .setContentMergeStrategy(ContentMergeStrategy.OURS)
                     .call();
             boolean changed = pull.getFetchResult().getTrackingRefUpdates()!=null &&  !pull.getFetchResult().getTrackingRefUpdates().isEmpty();
+            try{
+                if(!repo.stashList().call().isEmpty())
+                    repo.stashApply()
+                        .setStrategy(MergeStrategy.get(this.mergeStrategy.toUpperCase()))
+                        .setContentMergeStrategy(ContentMergeStrategy.OURS)
+                        .call();
+            }catch (Exception e){
+                System.err.println("App " + this.name+" failed to apply stash. Stashed changes are not currently active.");
+            }
             return changed;
         }catch (Exception e){
             e.printStackTrace();
