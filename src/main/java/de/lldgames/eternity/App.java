@@ -58,12 +58,16 @@ public class App {
      * pulls and restarts if pulled.
      */
     public void update(){
-        if(this.pullRepo()) this.restart();
+        if(this.pullRepo()){
+            System.out.println("new changes pulled in app "+this.name);
+            this.restart();
+        }
     }
 
     //start/stop
     public void start(){
         this.stop();
+        System.out.println(this.name+": start()");
         this.shouldBeRunning = true;
         try {
             boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
@@ -93,6 +97,7 @@ public class App {
     }
     public void stop(){
         if(!isRunning()) return;
+        System.out.println(this.name+": stop()");
         this.shouldBeRunning = false;
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(()->{
@@ -104,8 +109,8 @@ public class App {
         //start timeout force destroy
         try{
             int exitVal = process.waitFor();
-            System.out.println("stopped process with exit val " + exitVal);
-            System.out.println(this.isRunning());
+            System.out.println("APP "+this.name+" stopped process with exit val " + exitVal);
+            //System.out.println(this.isRunning());
             //stop the force shutdown
             service.shutdownNow();
         }catch (Exception e){
@@ -119,7 +124,7 @@ public class App {
 
     private void killChildren(Process p){
         long pid = p.pid();
-        System.out.println("killing processes for "+pid);
+        //System.out.println("killing processes for "+pid);
         ProcessBuilder builder;
 
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -129,7 +134,7 @@ public class App {
         }
 
         try {
-            builder.inheritIO();
+            //builder.inheritIO();
             builder.start().waitFor();
         }catch (Exception e){
             throw new RuntimeException(e);
