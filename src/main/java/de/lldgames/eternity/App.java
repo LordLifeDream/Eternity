@@ -158,7 +158,7 @@ public class App {
      */
     private boolean pullRepo(){
         try{
-            repo.stashCreate().call();
+            if(repo.status().call().hasUncommittedChanges()) repo.stashCreate().call();
             PullResult pull= repo.pull()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider("token", this.gitToken))
                     .setStrategy(MergeStrategy.get(this.mergeStrategy.toUpperCase()))
