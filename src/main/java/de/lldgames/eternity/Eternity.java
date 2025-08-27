@@ -1,15 +1,19 @@
 package de.lldgames.eternity;
 
+import de.lldgames.eternity.commands.Command;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Eternity {
+    public static final ArrayList<App> loadedApps = new ArrayList<>();
+
     public static void main(String[] args) {
-        ArrayList<App> loadedApps = new ArrayList<>();
         File appsFile = new File("./apps.json");
         try{
             if(!appsFile.exists()){
@@ -42,6 +46,19 @@ public class Eternity {
             loadedApps.add(app);
             if(apps.getJSONObject(key).has("gui") && apps.getJSONObject(key).getBoolean("gui") && false) new ProcessOutputViewer(null).displayApp(app);
             System.out.println("loaded app " + key);
+        }
+        setupIn();
+    }
+
+    public static void setupIn(){
+        Command.registerCMDs();
+        try(Scanner sc = new Scanner(System.in)){
+            while(sc.hasNext()){
+                String line = sc.nextLine();
+                String[] tokenized = line.split(" ");
+                if(tokenized.length==0) continue;
+                Command.callCmd(tokenized);
+            }
         }
     }
 }
