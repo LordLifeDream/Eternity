@@ -190,7 +190,8 @@ public class App {
                 .put("pullInterval", 5)
                 .put("mergeStrategy", "OURS")
                 //.put("gui", true);
-                .put("io", AppIOHandler.DEFAULT_CONFIG);
+                .put("io", AppIOHandler.DEFAULT_CONFIG)
+                .put("enabled", true);
         /*
         try(FileOutputStream fos = new FileOutputStream(f)){
             fos.write(data.toString().getBytes());

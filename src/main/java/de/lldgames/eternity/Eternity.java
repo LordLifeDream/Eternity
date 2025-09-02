@@ -42,7 +42,11 @@ public class Eternity {
 
         JSONObject apps = new JSONObject(content);
         for(String key: apps.keySet()){
-            App app = new App(apps.getJSONObject(key), key);
+            JSONObject appJson = apps.getJSONObject(key);
+            //disabled check here so we don't even create the app object
+            //if no enabled key present, it's probably supposed to be enabled so don't quit
+            if(appJson.has("enabled") && !appJson.getBoolean("enabled")) continue;
+            App app = new App(appJson, key);
             loadedApps.add(app);
             if(apps.getJSONObject(key).has("gui") && apps.getJSONObject(key).getBoolean("gui") && false) new ProcessOutputViewer(null).displayApp(app);
             System.out.println("loaded app " + key);
