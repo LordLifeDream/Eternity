@@ -37,6 +37,7 @@ public class Eternity {
             System.out.println("shutdown hook called!");
             for(App a: loadedApps){
                 a.stop();
+                a.closeRepo();
             }
         }));
 

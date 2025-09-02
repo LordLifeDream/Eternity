@@ -107,7 +107,6 @@ public class App {
         }, 10, TimeUnit.SECONDS);
         killChildren(process);
         process.destroy();
-        repo.close();
         //start timeout force destroy
         try{
             int exitVal = process.waitFor();
@@ -141,6 +140,10 @@ public class App {
         }catch (Exception e){
             throw new RuntimeException(e);
         }
+    }
+
+    public void closeRepo(){
+        this.repo.close();
     }
 
     private void init(){
