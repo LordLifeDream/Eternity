@@ -180,7 +180,9 @@ public class App {
             }
             return changed;
         }catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
+            String timeNow = LocalDateTime.now().toString();
+            System.out.println(timeNow+" error: failed to pull. Is the internet down? ("+e.getClass().getName()+")");
             return false;
         }
     }
