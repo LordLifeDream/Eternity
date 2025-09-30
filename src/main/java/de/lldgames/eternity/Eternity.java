@@ -1,6 +1,7 @@
 package de.lldgames.eternity;
 
 import de.lldgames.eternity.commands.Command;
+import de.lldgames.eternity.web.EternityServer;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -12,9 +13,9 @@ import java.util.Scanner;
 
 public class Eternity {
     public static final ArrayList<App> loadedApps = new ArrayList<>();
+    public static final File appsFile = new File("./apps.json");
 
-    public static void main(String[] args) {
-        File appsFile = new File("./apps.json");
+    public static JSONObject loadAppsFromFile(){
         try{
             if(!appsFile.exists()){
                 JSONObject dummy = new JSONObject();
@@ -33,6 +34,29 @@ public class Eternity {
         }catch (Exception e){
             throw new RuntimeException(e);
         }
+
+        return new JSONObject(content);
+    }
+
+    public static void loadApps(JSONObject appsFile){
+        //JSONObject apps = loadAppsFromFile();
+        for(String key: appsFile.keySet()){
+            JSONObject appJson = appsFile.getJSONObject(key);
+            addApp(appJson, key);
+        }
+    }
+
+    public static void addApp(JSONObject appJson, String name){
+        //disabled check here so we don't even create the app object
+        //if no enabled key present, it's probably supposed to be enabled so don't quit
+        if(appJson.has("enabled") && !appJson.getBoolean("enabled")) return;
+        App app = new App(appJson, name);
+        loadedApps.add(app);
+        //if(appsFile.getJSONObject(key).has("gui") && appsFile.getJSONObject(key).getBoolean("gui") && false) new ProcessOutputViewer(null).displayApp(app);
+        System.out.println("loaded app " + name);
+    }
+
+    public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(()->{
             System.out.println("shutdown hook called!");
             for(App a: loadedApps){
@@ -41,18 +65,10 @@ public class Eternity {
             }
         }));
 
-        JSONObject apps = new JSONObject(content);
-        for(String key: apps.keySet()){
-            JSONObject appJson = apps.getJSONObject(key);
-            //disabled check here so we don't even create the app object
-            //if no enabled key present, it's probably supposed to be enabled so don't quit
-            if(appJson.has("enabled") && !appJson.getBoolean("enabled")) continue;
-            App app = new App(appJson, key);
-            loadedApps.add(app);
-            if(apps.getJSONObject(key).has("gui") && apps.getJSONObject(key).getBoolean("gui") && false) new ProcessOutputViewer(null).displayApp(app);
-            System.out.println("loaded app " + key);
-        }
+        loadApps(loadAppsFromFile());
+
         setupIn();
+        EternityServer.start();
     }
 
     public static void setupIn(){

@@ -42,3 +42,4 @@ out/
 /buildOut/json-20250517.jar
 /buildOut/org.eclipse.jgit-7.3.0.202506031305-r.jar
 /buildOut/slf4j-api-1.7.36.jar
+/WEBTOKEN.txt
