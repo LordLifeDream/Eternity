@@ -27,7 +27,7 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+out/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -37,3 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 /apps.json
+/buildOut/commons-codec-1.18.0.jar
+/buildOut/JavaEWAH-1.2.3.jar
+/buildOut/json-20250517.jar
+/buildOut/org.eclipse.jgit-7.3.0.202506031305-r.jar
+/buildOut/slf4j-api-1.7.36.jar
