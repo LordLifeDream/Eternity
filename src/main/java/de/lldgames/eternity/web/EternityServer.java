@@ -29,9 +29,15 @@ public class EternityServer {
         }
     }
 
+    public static void stop(){
+        server.stop(0);
+    }
+
     private void createEndpoints(){
 
     }
+
+
 
     private boolean checkAuth(HttpExchange e){
         return  e.getRequestHeaders().containsKey("authorization") &&

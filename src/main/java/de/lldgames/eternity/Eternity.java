@@ -1,12 +1,14 @@
 package de.lldgames.eternity;
 
 import de.lldgames.eternity.commands.Command;
+import de.lldgames.eternity.selfUpdate.SelfUpdater;
 import de.lldgames.eternity.web.EternityServer;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -67,8 +69,11 @@ public class Eternity {
 
         loadApps(loadAppsFromFile());
 
-        setupIn();
         EternityServer.start();
+
+        if(!Arrays.stream(args).toList().contains("noSelfUpdate"))SelfUpdater.start();
+
+        setupIn();
     }
 
     public static void setupIn(){
@@ -80,6 +85,20 @@ public class Eternity {
                 if(tokenized.length==0) continue;
                 Command.callCmd(tokenized);
             }
+        }
+    }
+
+    public static void restart(){
+        EternityServer.stop();
+        System.out.println("ETERNITY RESTART ---- BEGIN NEW IO");
+        try {
+            Process p = new ProcessBuilder("java", "-jar", "./buildOut/eternity.jar")
+                    .directory(new File("./").getAbsoluteFile())
+                    .inheritIO()
+                    .start();
+            System.exit(0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
