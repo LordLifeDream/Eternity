@@ -13,14 +13,26 @@ import java.util.concurrent.TimeUnit;
 
 public class SelfUpdater {
     private static Git selfRepo;
+    private static Process eternityProcess;
+    private static boolean isRestarting = false;
 
     public static void start(){
         try {
             selfRepo = Git.open(new File("./"));
+            eternityProcess = Eternity.createEternityProcess(new String[]{"noSelfUpdate"});
+            eternityProcess.onExit().thenAccept(SelfUpdater::onProcessExit);
             ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
-            ex.scheduleAtFixedRate(SelfUpdater::pullLoop, 2, 2, TimeUnit.MINUTES);
+            ex.scheduleAtFixedRate(SelfUpdater::pullLoop, 0, 2, TimeUnit.MINUTES);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void onProcessExit(Process p){
+        if(!isRestarting){
+            //either crash or user exit.
+            System.out.println("[SELFUPDATER] restarting due to proxess termination. Exit code: " + p.exitValue());
+            System.exit(0);
         }
     }
 
@@ -31,10 +43,23 @@ public class SelfUpdater {
             boolean changed = res.isSuccessful() && res.getFetchResult().getTrackingRefUpdates() != null && !res.getFetchResult().getTrackingRefUpdates().isEmpty();
             if (changed){
                 System.out.println("ETERNITY: pulled new version. RESTARTING...");
-                Eternity.restart();
+                //Eternity.restart();
             }
         }catch (Exception e){
 
         }
+    }
+
+    private static void restart(){
+        isRestarting = true;
+        try{
+            if(eternityProcess!=null&& eternityProcess.isAlive()){
+                eternityProcess.destroy();
+            }
+            eternityProcess = Eternity.createEternityProcess(new String[]{"noSelfUpdate"});
+        }catch (Exception e){
+           e.printStackTrace();
+        }
+        isRestarting = false;
     }
 }

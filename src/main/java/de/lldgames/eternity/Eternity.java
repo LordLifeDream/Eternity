@@ -11,11 +11,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Eternity {
     public static final ArrayList<App> loadedApps = new ArrayList<>();
     public static final File appsFile = new File("./apps.json");
+    public static String[] args;
 
     public static JSONObject loadAppsFromFile(){
         try{
@@ -59,6 +62,14 @@ public class Eternity {
     }
 
     public static void main(String[] args) {
+        Eternity.args = args;
+        System.out.println("using arguments: " + Arrays.toString(args));
+        if(!Arrays.stream(args).toList().contains("noSelfUpdate")){
+            SelfUpdater.start();
+            return;
+        }
+
+
         Runtime.getRuntime().addShutdownHook(new Thread(()->{
             System.out.println("shutdown hook called!");
             for(App a: loadedApps){
@@ -67,12 +78,19 @@ public class Eternity {
             }
         }));
 
-        loadApps(loadAppsFromFile());
+        //loadApps(loadAppsFromFile());
 
         EternityServer.start();
 
-        if(!Arrays.stream(args).toList().contains("noSelfUpdate"))SelfUpdater.start();
+        //if(!Arrays.stream(args).toList().contains("noSelfUpdate"))SelfUpdater.start();
 
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(5000);
+            System.out.println("dsfdsfdfsdffdsdfsdsfsfdsfdsfsdf");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         setupIn();
     }
 
@@ -88,11 +106,32 @@ public class Eternity {
         }
     }
 
+
+
+
+    public static Process createEternityProcess(String[] args2){
+        try {
+            String[] cmd = new String[]{"java", "-jar", "./buildOut/eternity.jar"};
+            ArrayList<String> ls = new ArrayList<>(Arrays.stream(cmd).toList());
+            ls.addAll(Arrays.stream(args2).toList());
+            return new ProcessBuilder(/*"java", "-jar", "./buildOut/eternity.jar" */ ls)
+                    .directory(new File("./").getAbsoluteFile())
+                    .inheritIO()
+                    .start();
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Deprecated
     public static void restart(){
         EternityServer.stop();
         System.out.println("ETERNITY RESTART ---- BEGIN NEW IO");
+        String[] cmd = new String[]{"java", "-jar", "./buildOut/eternity.jar"};
+        ArrayList<String> ls = new ArrayList<>(Arrays.stream(cmd).toList());
+        ls.addAll(Arrays.stream(args).toList());
         try {
-            Process p = new ProcessBuilder("java", "-jar", "./buildOut/eternity.jar")
+            Process p = new ProcessBuilder(/*"java", "-jar", "./buildOut/eternity.jar" */ ls)
                     .directory(new File("./").getAbsoluteFile())
                     .inheritIO()
                     .start();
